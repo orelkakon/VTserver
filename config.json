@@ -1,0 +1,8 @@
+{
+    "host": "localhost",
+    "user": "root",
+    "dbPort":"3306",
+    "password": "207772922",
+    "database":"vtserver",
+    "port": 3001
+}
