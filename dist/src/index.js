@@ -16,6 +16,7 @@ const config = require("./../config.json");
 const login_1 = require("./routes/login");
 const register_1 = require("./routes/register");
 const logger_1 = require("./utils/logger");
+const pincode_1 = require("./routes/pincode");
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -50,6 +51,26 @@ app.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
     catch (err) {
         logger_1.loggerError.error(`failed in params of /register route. ${err}`);
+    }
+}));
+app.post('/addpincode', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const username = req.body.username;
+        const pincode = req.body.pincode;
+        (yield pincode_1.addPinCode(username, pincode)) ? res.send(true) : res.send(false);
+    }
+    catch (err) {
+        logger_1.loggerError.error(`failed to add pin code. ${err}`);
+    }
+}));
+app.get('/getpincode', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const username = req.body.username;
+        const pincode = yield pincode_1.getPinCode(username);
+        res.send(pincode);
+    }
+    catch (err) {
+        logger_1.loggerError.error(`failed to get pin code. ${err}`);
     }
 }));
 // server

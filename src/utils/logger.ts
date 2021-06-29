@@ -1,3 +1,4 @@
+import { time } from "console"
 import * as winston from "winston"
 
 export const loggerInfo = winston.createLogger({
