@@ -4,10 +4,10 @@ import * as config from './../config.json'
 
 import { checkLogin } from './routes/login'
 import { checkRegister } from './routes/register'
-import { loggerError } from './utils/logger'
+import { loggerError, loggerInfo } from './utils/logger'
 import { addPinCode, getPinCode } from './routes/pincode'
 import { getAllBlogPosts, addBlogPost, addBlogComment } from './routes/blogPosts'
-import { getAllDirectPosts, addDirectPost, addDirectComment } from './routes/directPosts'
+import { getAlldirectPosts, addirectPost, addirectComment } from './routes/directPosts'
 
 const app = express();
 app.use(cors());
@@ -77,8 +77,9 @@ app.post('/addblogpost', async (req, res) =>{
         const date = req.body.date
         const files = req.body.files
         const result = await addBlogPost(username, title, description, date, files)
+        res.send(result)
     } catch (err) {
-        loggerError.error(`failed to get pin code. ${err}`)
+        loggerError.error(`failed to add blog post. ${err}`)
     }
 })
 
@@ -87,16 +88,19 @@ app.post('/addblogcomment', async (req, res) =>{
         const username = req.body.username
         const description = req.body.description
         const date = req.body.date
+        const postid = req.body.postid
         const files = req.body.files
-        const result = await addBlogComment(username, description, date, files)
+        const result = await addBlogComment(username, description, date, postid, files)
+        res.send(result)
     } catch (err) {
         loggerError.error(`failed to get pin code. ${err}`)
     }
 })
 
-app.post('/getallblogposts', async (req, res) =>{
+app.get('/getallblogposts', async (req, res) =>{
     try {
         const result = await getAllBlogPosts()
+        res.send(result)
     } catch (err) {
         loggerError.error(`failed to get pin code. ${err}`)
     }
@@ -109,7 +113,8 @@ app.post('/adddirectpost', async (req, res) =>{
         const description = req.body.description
         const date = req.body.date
         const files = req.body.files
-        const result = await addDirectPost(username, title, description, date, files)
+        const result = await addirectPost(username, title, description, date, files)
+        res.send(result)
     } catch (err) {
         loggerError.error(`failed to get pin code. ${err}`)
     }
@@ -121,16 +126,19 @@ app.post('/adddirectcomment', async (req, res) =>{
         const description = req.body.description
         const date = req.body.date
         const files = req.body.files
-        const result = await addDirectComment(username, description, date, files)
+        const postid = req.body.postid
+        const result = await addirectComment(username, description, date, postid, files)
+        res.send(result)
     } catch (err) {
         loggerError.error(`failed to get pin code. ${err}`)
     }
 })
 
-app.post('/getalldirectposts', async (req, res) =>{
+app.get('/getalldirectposts', async (req, res) =>{
     try {
         const username = req.body.username
-        const result = await getAllDirectPosts(username)
+        const result = await getAlldirectPosts(username)
+        res.send(result)
     } catch (err) {
         loggerError.error(`failed to get pin code. ${err}`)
     }
@@ -138,5 +146,6 @@ app.post('/getalldirectposts', async (req, res) =>{
 
 // server
 app.listen(config.port, () => {
+    loggerInfo.info(`VTserver listening at ${config.port}`)
     console.log(`VTserver listening at ${config.port}`)
 })

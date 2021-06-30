@@ -17,6 +17,8 @@ const login_1 = require("./routes/login");
 const register_1 = require("./routes/register");
 const logger_1 = require("./utils/logger");
 const pincode_1 = require("./routes/pincode");
+const blogPosts_1 = require("./routes/blogPosts");
+const directPosts_1 = require("./routes/directPosts");
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -68,6 +70,81 @@ app.get('/getpincode', (req, res) => __awaiter(void 0, void 0, void 0, function*
         const username = req.body.username;
         const pincode = yield pincode_1.getPinCode(username);
         res.send(pincode);
+    }
+    catch (err) {
+        logger_1.loggerError.error(`failed to get pin code. ${err}`);
+    }
+}));
+app.post('/addblogpost', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const username = req.body.username;
+        const title = req.body.title;
+        const description = req.body.description;
+        const date = req.body.date;
+        const files = req.body.files;
+        const result = yield blogPosts_1.addBlogPost(username, title, description, date, files);
+        res.send(result);
+    }
+    catch (err) {
+        logger_1.loggerError.error(`failed to add blog post. ${err}`);
+    }
+}));
+app.post('/addblogcomment', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const username = req.body.username;
+        const description = req.body.description;
+        const date = req.body.date;
+        const postid = req.body.postid;
+        const files = req.body.files;
+        const result = yield blogPosts_1.addBlogComment(username, description, date, postid, files);
+        res.send(result);
+    }
+    catch (err) {
+        logger_1.loggerError.error(`failed to get pin code. ${err}`);
+    }
+}));
+app.get('/getallblogposts', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield blogPosts_1.getAllBlogPosts();
+        res.send(result);
+    }
+    catch (err) {
+        logger_1.loggerError.error(`failed to get pin code. ${err}`);
+    }
+}));
+app.post('/adddirectpost', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const username = req.body.username;
+        const title = req.body.title;
+        const description = req.body.description;
+        const date = req.body.date;
+        const files = req.body.files;
+        const result = yield directPosts_1.addirectPost(username, title, description, date, files);
+        res.send(result);
+    }
+    catch (err) {
+        logger_1.loggerError.error(`failed to get pin code. ${err}`);
+    }
+}));
+app.post('/adddirectcomment', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const username = req.body.username;
+        const description = req.body.description;
+        const date = req.body.date;
+        const files = req.body.files;
+        const postid = req.body.postid;
+        const result = yield directPosts_1.addirectComment(username, description, date, postid, files);
+        res.send(result);
+    }
+    catch (err) {
+        logger_1.loggerError.error(`failed to get pin code. ${err}`);
+    }
+}));
+app.get('/getalldirectposts', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const username = req.body.username;
+        const result = yield directPosts_1.getAlldirectPosts(username);
+        res.send(result);
     }
     catch (err) {
         logger_1.loggerError.error(`failed to get pin code. ${err}`);

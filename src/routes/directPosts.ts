@@ -1,14 +1,20 @@
+import { addDirectPost, addDirectComment, getAllDirectComments, getAllDirectPosts } from './../db/mysqlAPI'
+import { mergePostsComment } from './../utils/util'
 
-export const addDirectPost = (username, title, description, date, files) => {
 
+export const addirectPost = async (username, title, description, date, files) => {
+    return await addDirectPost(username, title, description, date, files)
 }
 
 
-export const addDirectComment = (username, description, date, files) => {
-    
+export const addirectComment = async (username, description, date, postid, files) => {
+    return await addDirectComment(username, description, date, postid, files);
 }
 
 
-export const getAllDirectPosts = (username) => {
-    
+export const getAlldirectPosts = async (username) => {
+    const posts = await getAllDirectPosts(username)
+    const comments = await getAllDirectComments()
+    const mergedData = mergePostsComment(posts, comments)
+    return mergedData;
 }
