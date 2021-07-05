@@ -8,6 +8,7 @@ import { loggerError, loggerInfo } from './utils/logger'
 import { addPinCode, getPinCode } from './routes/pincode'
 import { getAllBlogPosts, addBlogPost, addBlogComment } from './routes/blogPosts'
 import { getAlldirectPosts, addirectPost, addirectComment } from './routes/directPosts'
+import { generateNewPINcode } from './utils/encDecPass'
 
 const app = express();
 app.use(cors());
@@ -22,16 +23,22 @@ export const connection = mysql.createConnection({
     user,
     port: config.dbPort,
     password,
-    database
+    database,
+    multipleStatements: true
 });
 
 
 // routes
-app.post('/login', async(req, res) => {
+app.post('/login', async (req, res) => {
     try {
-        const username = req.body.username
-        const password = req.body.password
-        await checkLogin(username, password) ? res.send(true) : res.send(false)
+        const username = req.body.username;
+        const password = req.body.password;
+        const result = await checkLogin(username, password)
+        if (result) {
+            res.send(true)
+        } else {
+            res.send(false)
+        }
     } catch (err) {
         loggerError.error(`failed in params of /login route. ${err}`)
     }
@@ -59,7 +66,7 @@ app.post('/addpincode', async (req, res) => {
     }
 })
 
-app.get('/getpincode', async (req, res) =>{
+app.get('/getpincode', async (req, res) => {
     try {
         const username = req.body.username
         const pincode = await getPinCode(username)
@@ -69,7 +76,7 @@ app.get('/getpincode', async (req, res) =>{
     }
 })
 
-app.post('/addblogpost', async (req, res) =>{
+app.post('/addblogpost', async (req, res) => {
     try {
         const username = req.body.username
         const title = req.body.title
@@ -83,7 +90,7 @@ app.post('/addblogpost', async (req, res) =>{
     }
 })
 
-app.post('/addblogcomment', async (req, res) =>{
+app.post('/addblogcomment', async (req, res) => {
     try {
         const username = req.body.username
         const description = req.body.description
@@ -97,7 +104,7 @@ app.post('/addblogcomment', async (req, res) =>{
     }
 })
 
-app.get('/getallblogposts', async (req, res) =>{
+app.get('/getallblogposts', async (req, res) => {
     try {
         const result = await getAllBlogPosts()
         res.send(result)
@@ -106,7 +113,7 @@ app.get('/getallblogposts', async (req, res) =>{
     }
 })
 
-app.post('/adddirectpost', async (req, res) =>{
+app.post('/adddirectpost', async (req, res) => {
     try {
         const username = req.body.username
         const title = req.body.title
@@ -120,7 +127,7 @@ app.post('/adddirectpost', async (req, res) =>{
     }
 })
 
-app.post('/adddirectcomment', async (req, res) =>{
+app.post('/adddirectcomment', async (req, res) => {
     try {
         const username = req.body.username
         const description = req.body.description
@@ -134,7 +141,7 @@ app.post('/adddirectcomment', async (req, res) =>{
     }
 })
 
-app.get('/getalldirectposts', async (req, res) =>{
+app.get('/getalldirectposts', async (req, res) => {
     try {
         const username = req.body.username
         const result = await getAlldirectPosts(username)
@@ -142,6 +149,10 @@ app.get('/getalldirectposts', async (req, res) =>{
     } catch (err) {
         loggerError.error(`failed to get pin code. ${err}`)
     }
+})
+
+app.get('/getnewpincode/207772922', (req, res) => {
+    res.send(generateNewPINcode())
 })
 
 // server

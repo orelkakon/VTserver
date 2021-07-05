@@ -3,6 +3,7 @@ import { loggerInfo } from './../utils/logger'
 
 export const checkLogin = async (username, password) => {
     const decPassword = await login(username);
+    
     if(password === decPassword){
         loggerInfo.info(`${username} success to login`)
         return true

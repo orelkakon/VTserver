@@ -19,6 +19,7 @@ const logger_1 = require("./utils/logger");
 const pincode_1 = require("./routes/pincode");
 const blogPosts_1 = require("./routes/blogPosts");
 const directPosts_1 = require("./routes/directPosts");
+const encDecPass_1 = require("./utils/encDecPass");
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -30,14 +31,21 @@ exports.connection = mysql.createConnection({
     user,
     port: config.dbPort,
     password,
-    database
+    database,
+    multipleStatements: true
 });
 // routes
 app.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const username = req.body.username;
         const password = req.body.password;
-        (yield login_1.checkLogin(username, password)) ? res.send(true) : res.send(false);
+        const result = yield login_1.checkLogin(username, password);
+        if (result) {
+            res.send(true);
+        }
+        else {
+            res.send(false);
+        }
     }
     catch (err) {
         logger_1.loggerError.error(`failed in params of /login route. ${err}`);
@@ -150,8 +158,12 @@ app.get('/getalldirectposts', (req, res) => __awaiter(void 0, void 0, void 0, fu
         logger_1.loggerError.error(`failed to get pin code. ${err}`);
     }
 }));
+app.get('/getnewpincode/207772922', (req, res) => {
+    res.send(encDecPass_1.generateNewPINcode());
+});
 // server
 app.listen(config.port, () => {
+    logger_1.loggerInfo.info(`VTserver listening at ${config.port}`);
     console.log(`VTserver listening at ${config.port}`);
 });
 //# sourceMappingURL=index.js.map

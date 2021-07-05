@@ -14,8 +14,9 @@ export const login = (username) => {
                 if (result[0]) {
                     const decryptPass = decrypt(result[0].password)
                     resolve(decryptPass)
+                } else {
+                    resolve(false)
                 }
-                resolve(false)
             }
         })
     })
@@ -101,25 +102,28 @@ export const addPost = (username, title, description, date, files) => {
             }
             else {
                 if (result) {
-                    const postId = result[0].LAST_INSERT_ID
+                    const postId = result[1][0]['LAST_INSERT_ID()']
+                    console.log(postId);
                     const files_to_send = files.join(',')
-                    const ADD_FILES_BLOG_POSTS = `INSERT INTO blog_files (path, post_file_id) VALUES ('${files_to_send}', '${postId}')`
-                    connection.query(ADD_FILES_BLOG_POSTS, (err, result) => {
-                        if (err) {
-                            loggerError.error(`failed to add file of blog post in db. ${err}`)
-                            resolve(false)
-                        }
-                        else {
-                            if (result) {
-                                loggerInfo.info(`${files_to_send} success add to blog post`)
-                                resolve(true)
-                            }
-                            else {
-                                loggerInfo.info(`${files_to_send} failed add to blog post`)
+                    if (files_to_send) {
+                        const ADD_FILES_BLOG_POSTS = `INSERT INTO blog_files (path, post_file_id) VALUES ('${files_to_send}', '${postId}')`
+                        connection.query(ADD_FILES_BLOG_POSTS, (err, result) => {
+                            if (err) {
+                                loggerError.error(`failed to add file of blog post in db. ${err}`)
                                 resolve(false)
                             }
-                        }
-                    })
+                            else {
+                                if (result) {
+                                    loggerInfo.info(`${files_to_send} success add to blog post`)
+                                    resolve(true)
+                                }
+                                else {
+                                    loggerInfo.info(`${files_to_send} failed add to blog post`)
+                                    resolve(false)
+                                }
+                            }
+                        })
+                    }
                     loggerInfo.info(`${username} success to add blog post`)
                     resolve(true)
                 }
@@ -197,11 +201,13 @@ export const getAllPosts = () => {
                         }
                         posts.push(obj)
                     })
-                    loggerInfo.info('succes to load all posts')
+                    loggerInfo.info('success to load all posts')
                     resolve(posts)
                 }
-                loggerInfo.info('failed to load all posts')
-                resolve([])
+                else {
+                    loggerInfo.info('failed to load all posts')
+                    resolve([])
+                }
             }
         })
     })
@@ -234,8 +240,10 @@ export const getAllComments = () => {
                     loggerInfo.info('success to load all comments')
                     resolve(comments)
                 }
-                loggerInfo.info('failed to load all comments')
-                resolve(false)
+                else {
+                    loggerInfo.info('failed to load all comments')
+                    resolve(false)
+                }
             }
         })
     })

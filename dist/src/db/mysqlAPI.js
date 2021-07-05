@@ -17,7 +17,9 @@ const login = (username) => {
                     const decryptPass = encDecPass_1.decrypt(result[0].password);
                     resolve(decryptPass);
                 }
-                resolve(false);
+                else {
+                    resolve(false);
+                }
             }
         });
     });
@@ -103,8 +105,9 @@ const addPost = (username, title, description, date, files) => {
             }
             else {
                 if (result) {
-                    const postId = result[0].LAST_INSERT_ID;
+                    const postId = result[1][0]['LAST_INSERT_ID()'];
                     const files_to_send = files.join(',');
+                    // if (files_to_send) {
                     const ADD_FILES_BLOG_POSTS = `INSERT INTO blog_files (path, post_file_id) VALUES ('${files_to_send}', '${postId}')`;
                     index_1.connection.query(ADD_FILES_BLOG_POSTS, (err, result) => {
                         if (err) {
@@ -122,6 +125,7 @@ const addPost = (username, title, description, date, files) => {
                             }
                         }
                     });
+                    // }
                     logger_1.loggerInfo.info(`${username} success to add blog post`);
                     resolve(true);
                 }
@@ -199,11 +203,13 @@ const getAllPosts = () => {
                         };
                         posts.push(obj);
                     });
-                    logger_1.loggerInfo.info('succes to load all posts');
+                    logger_1.loggerInfo.info('success to load all posts');
                     resolve(posts);
                 }
-                logger_1.loggerInfo.info('failed to load all posts');
-                resolve([]);
+                else {
+                    logger_1.loggerInfo.info('failed to load all posts');
+                    resolve([]);
+                }
             }
         });
     });
@@ -236,8 +242,10 @@ const getAllComments = () => {
                     logger_1.loggerInfo.info('success to load all comments');
                     resolve(comments);
                 }
-                logger_1.loggerInfo.info('failed to load all comments');
-                resolve(false);
+                else {
+                    logger_1.loggerInfo.info('failed to load all comments');
+                    resolve(false);
+                }
             }
         });
     });
