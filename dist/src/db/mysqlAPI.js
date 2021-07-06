@@ -84,7 +84,7 @@ const getPin = (username) => {
                 }
                 else {
                     logger_1.loggerInfo.info(`failed to get pin code of ${username}`);
-                    resolve('0000'); // 0000 represent failed pin code 
+                    resolve(''); // '' represent failed pin code 
                 }
             }
         });
@@ -107,25 +107,25 @@ const addPost = (username, title, description, date, files) => {
                 if (result) {
                     const postId = result[1][0]['LAST_INSERT_ID()'];
                     const files_to_send = files.join(',');
-                    // if (files_to_send) {
-                    const ADD_FILES_BLOG_POSTS = `INSERT INTO blog_files (path, post_file_id) VALUES ('${files_to_send}', '${postId}')`;
-                    index_1.connection.query(ADD_FILES_BLOG_POSTS, (err, result) => {
-                        if (err) {
-                            logger_1.loggerError.error(`failed to add file of blog post in db. ${err}`);
-                            resolve(false);
-                        }
-                        else {
-                            if (result) {
-                                logger_1.loggerInfo.info(`${files_to_send} success add to blog post`);
-                                resolve(true);
-                            }
-                            else {
-                                logger_1.loggerInfo.info(`${files_to_send} failed add to blog post`);
+                    if (files_to_send) {
+                        const ADD_FILES_BLOG_POSTS = `INSERT INTO blog_files (path, post_file_id) VALUES ('${files_to_send}', '${postId}')`;
+                        index_1.connection.query(ADD_FILES_BLOG_POSTS, (err, result) => {
+                            if (err) {
+                                logger_1.loggerError.error(`failed to add file of blog post in db. ${err}`);
                                 resolve(false);
                             }
-                        }
-                    });
-                    // }
+                            else {
+                                if (result) {
+                                    logger_1.loggerInfo.info(`${files_to_send} success add to blog post`);
+                                    resolve(true);
+                                }
+                                else {
+                                    logger_1.loggerInfo.info(`${files_to_send} failed add to blog post`);
+                                    resolve(false);
+                                }
+                            }
+                        });
+                    }
                     logger_1.loggerInfo.info(`${username} success to add blog post`);
                     resolve(true);
                 }

@@ -66,10 +66,10 @@ app.post('/addpincode', async (req, res) => {
     }
 })
 
-app.get('/getpincode', async (req, res) => {
+app.post('/getpincode', async (req, res) => {
     try {
         const username = req.body.username
-        const pincode = await getPinCode(username)
+        const pincode = await getPinCode(username)        
         res.send(pincode)
     } catch (err) {
         loggerError.error(`failed to get pin code. ${err}`)
@@ -100,7 +100,7 @@ app.post('/addblogcomment', async (req, res) => {
         const result = await addBlogComment(username, description, date, postid, files)
         res.send(result)
     } catch (err) {
-        loggerError.error(`failed to get pin code. ${err}`)
+        loggerError.error(`failed to add blog comment. ${err}`)
     }
 })
 
@@ -109,7 +109,7 @@ app.get('/getallblogposts', async (req, res) => {
         const result = await getAllBlogPosts()
         res.send(result)
     } catch (err) {
-        loggerError.error(`failed to get pin code. ${err}`)
+        loggerError.error(`failed to get all blog posts. ${err}`)
     }
 })
 
@@ -123,7 +123,7 @@ app.post('/adddirectpost', async (req, res) => {
         const result = await addirectPost(username, title, description, date, files)
         res.send(result)
     } catch (err) {
-        loggerError.error(`failed to get pin code. ${err}`)
+        loggerError.error(`failed to add direct post. ${err}`)
     }
 })
 
@@ -137,17 +137,17 @@ app.post('/adddirectcomment', async (req, res) => {
         const result = await addirectComment(username, description, date, postid, files)
         res.send(result)
     } catch (err) {
-        loggerError.error(`failed to get pin code. ${err}`)
+        loggerError.error(`failed to add direct comment. ${err}`)
     }
 })
 
-app.get('/getalldirectposts', async (req, res) => {
+app.post('/getalldirectposts', async (req, res) => {
     try {
         const username = req.body.username
         const result = await getAlldirectPosts(username)
         res.send(result)
     } catch (err) {
-        loggerError.error(`failed to get pin code. ${err}`)
+        loggerError.error(`failed to get all direct posts. ${err}`)
     }
 })
 

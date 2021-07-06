@@ -81,7 +81,7 @@ export const getPin = (username) => {
                 }
                 else {
                     loggerInfo.info(`failed to get pin code of ${username}`)
-                    resolve('0000') // 0000 represent failed pin code 
+                    resolve('') // '' represent failed pin code 
                 }
             }
         })
@@ -103,7 +103,6 @@ export const addPost = (username, title, description, date, files) => {
             else {
                 if (result) {
                     const postId = result[1][0]['LAST_INSERT_ID()']
-                    console.log(postId);
                     const files_to_send = files.join(',')
                     if (files_to_send) {
                         const ADD_FILES_BLOG_POSTS = `INSERT INTO blog_files (path, post_file_id) VALUES ('${files_to_send}', '${postId}')`
