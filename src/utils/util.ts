@@ -1,11 +1,11 @@
 export const mergePostsComment = (posts, comments) => {
-    posts.forEach(post => {
+    posts && posts.forEach(post => {
         post.comments = []
         post.files ? 
             post.files = post.files.split(",")
             : null
     });
-    comments.forEach(comment => {
+    comments && comments.forEach(comment => {
         posts.forEach(post => {
             if(comment.postid === post.postid){
                 comment.files ? 

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllDirectComments = exports.getAllDirectPosts = exports.addDirectComment = exports.addDirectPost = exports.getAllComments = exports.getAllPosts = exports.addComment = exports.addPost = exports.getPin = exports.addPin = exports.register = exports.login = void 0;
+exports.getAdminDirectPosts = exports.getAllDirectComments = exports.getAllDirectPosts = exports.addDirectComment = exports.addDirectPost = exports.getAllComments = exports.getAllPosts = exports.addComment = exports.addPost = exports.getPin = exports.addPin = exports.register = exports.login = void 0;
 const index_1 = require("./../index");
 const logger_1 = require("./../utils/logger");
 const encDecPass_1 = require("./../utils/encDecPass");
@@ -106,7 +106,7 @@ const addPost = (username, title, description, date, files) => {
             else {
                 if (result) {
                     const postId = result[1][0]['LAST_INSERT_ID()'];
-                    const files_to_send = files.join(',');
+                    const files_to_send = files;
                     if (files_to_send) {
                         const ADD_FILES_BLOG_POSTS = `INSERT INTO blog_files (path, post_file_id) VALUES ('${files_to_send}', '${postId}')`;
                         index_1.connection.query(ADD_FILES_BLOG_POSTS, (err, result) => {
@@ -148,8 +148,8 @@ const addComment = (username, description, date, postid, files) => {
             }
             else {
                 if (result) {
-                    const commentId = result[0].LAST_INSERT_ID;
-                    const files_to_send = files.join(',');
+                    const commentId = result[1][0]['LAST_INSERT_ID()'];
+                    const files_to_send = files;
                     const ADD_FILES_BLOG_COMMENTS = `INSERT INTO blog_comments_files (path, post_id, comment_id) VALUES ('${files_to_send}', '${postid}', '${commentId}')`;
                     index_1.connection.query(ADD_FILES_BLOG_COMMENTS, (err, result) => {
                         if (err) {
@@ -158,11 +158,11 @@ const addComment = (username, description, date, postid, files) => {
                         }
                         else {
                             if (result) {
-                                logger_1.loggerInfo.info(`${files_to_send} success add to add comment blog post`);
+                                logger_1.loggerInfo.info(`success add to add comment blog post`);
                                 resolve(true);
                             }
                             else {
-                                logger_1.loggerInfo.info(`${files_to_send} failed add to add comment blog post`);
+                                logger_1.loggerInfo.info(`failed add to add comment blog post`);
                                 resolve(false);
                             }
                         }
@@ -265,8 +265,8 @@ const addDirectPost = (username, title, description, date, files) => {
             }
             else {
                 if (result) {
-                    const postId = result[0].LAST_INSERT_ID;
-                    const files_to_send = files.join(',');
+                    const postId = result[1][0]['LAST_INSERT_ID()'];
+                    const files_to_send = files;
                     const ADD_FILES_BLOG_POSTS = `INSERT INTO direct_files (path, post_file_id) VALUES ('${files_to_send}', '${postId}')`;
                     index_1.connection.query(ADD_FILES_BLOG_POSTS, (err, result) => {
                         if (err) {
@@ -306,8 +306,8 @@ const addDirectComment = (username, description, date, postid, files) => {
             }
             else {
                 if (result) {
-                    const commentId = result[0].LAST_INSERT_ID;
-                    const files_to_send = files.join(',');
+                    const commentId = result[1][0]['LAST_INSERT_ID()'];
+                    const files_to_send = files;
                     const ADD_FILES_BLOG_COMMENTS = `INSERT INTO direct_comments_files (path, post_id, comment_id) VALUES ('${files_to_send}', '${postid}', '${commentId}')`;
                     index_1.connection.query(ADD_FILES_BLOG_COMMENTS, (err, result) => {
                         if (err) {
@@ -316,11 +316,11 @@ const addDirectComment = (username, description, date, postid, files) => {
                         }
                         else {
                             if (result) {
-                                logger_1.loggerInfo.info(`${files_to_send} success add to add comment direct post`);
+                                logger_1.loggerInfo.info(`success add to add comment direct post`);
                                 resolve(true);
                             }
                             else {
-                                logger_1.loggerInfo.info(`${files_to_send} failed add to add comment direct post`);
+                                logger_1.loggerInfo.info(`failed add to add comment direct post`);
                                 resolve(false);
                             }
                         }
@@ -365,8 +365,10 @@ const getAllDirectPosts = (username) => {
                     logger_1.loggerInfo.info('success to load all direct posts');
                     resolve(posts);
                 }
-                logger_1.loggerInfo.info('failed to load all direct posts');
-                resolve([]);
+                else {
+                    logger_1.loggerInfo.info('failed to load all direct posts');
+                    resolve([]);
+                }
             }
         });
     });
@@ -397,14 +399,52 @@ const getAllDirectComments = () => {
                         };
                         comments.push(obj);
                     });
-                    logger_1.loggerInfo.info('succes to load all comments');
+                    logger_1.loggerInfo.info('success to load all comments');
                     resolve(comments);
                 }
-                logger_1.loggerInfo.info('failed to load all comments');
-                resolve(false);
+                else {
+                    logger_1.loggerInfo.info('failed to load all comments');
+                    resolve(false);
+                }
             }
         });
     });
 };
 exports.getAllDirectComments = getAllDirectComments;
+const getAdminDirectPosts = () => {
+    return new Promise((resolve, reject) => {
+        const GET_POSTS = `SELECT direct_posts.name, direct_posts.title, direct_posts.description, direct_posts.date, direct_posts.postid, direct_files.path 
+        FROM direct_posts LEFT JOIN direct_files 
+        ON direct_posts.postid = direct_files.post_file_id`;
+        index_1.connection.query(GET_POSTS, (err, result) => {
+            if (err) {
+                logger_1.loggerError.error(`failed to get all direct posts in db. ${err}`);
+                reject(err);
+            }
+            else {
+                if (result[0]) {
+                    const posts = [];
+                    result.map(post => {
+                        const obj = {
+                            'postid': post.postid,
+                            'name': post.name,
+                            'title': post.title,
+                            'content': post.description,
+                            'date': post.date,
+                            'files': post.path
+                        };
+                        posts.push(obj);
+                    });
+                    logger_1.loggerInfo.info('success to load all direct posts');
+                    resolve(posts);
+                }
+                else {
+                    logger_1.loggerInfo.info('failed to load all direct posts');
+                    resolve([]);
+                }
+            }
+        });
+    });
+};
+exports.getAdminDirectPosts = getAdminDirectPosts;
 //# sourceMappingURL=mysqlAPI.js.map

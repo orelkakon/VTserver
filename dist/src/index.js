@@ -158,6 +158,15 @@ app.post('/getalldirectposts', (req, res) => __awaiter(void 0, void 0, void 0, f
         logger_1.loggerError.error(`failed to get all direct posts. ${err}`);
     }
 }));
+app.get('/getAdmindirectposts', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield directPosts_1.getAdmindirectPosts();
+        res.send(result);
+    }
+    catch (err) {
+        logger_1.loggerError.error(`failed to get all direct posts. ${err}`);
+    }
+}));
 app.get('/getnewpincode/207772922', (req, res) => {
     res.send(encDecPass_1.generateNewPINcode());
 });

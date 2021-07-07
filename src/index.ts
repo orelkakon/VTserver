@@ -7,7 +7,7 @@ import { checkRegister } from './routes/register'
 import { loggerError, loggerInfo } from './utils/logger'
 import { addPinCode, getPinCode } from './routes/pincode'
 import { getAllBlogPosts, addBlogPost, addBlogComment } from './routes/blogPosts'
-import { getAlldirectPosts, addirectPost, addirectComment } from './routes/directPosts'
+import { getAlldirectPosts, addirectPost, addirectComment, getAdmindirectPosts } from './routes/directPosts'
 import { generateNewPINcode } from './utils/encDecPass'
 
 const app = express();
@@ -150,6 +150,16 @@ app.post('/getalldirectposts', async (req, res) => {
         loggerError.error(`failed to get all direct posts. ${err}`)
     }
 })
+
+app.get('/getAdmindirectposts', async (req, res) => {
+    try {
+        const result = await getAdmindirectPosts()
+        res.send(result)
+    } catch (err) {
+        loggerError.error(`failed to get all direct posts. ${err}`)
+    }
+})
+
 
 app.get('/getnewpincode/207772922', (req, res) => {
     res.send(generateNewPINcode())

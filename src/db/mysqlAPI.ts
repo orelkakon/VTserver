@@ -103,7 +103,7 @@ export const addPost = (username, title, description, date, files) => {
             else {
                 if (result) {
                     const postId = result[1][0]['LAST_INSERT_ID()']
-                    const files_to_send = files.join(',')
+                    const files_to_send = files
                     if (files_to_send) {
                         const ADD_FILES_BLOG_POSTS = `INSERT INTO blog_files (path, post_file_id) VALUES ('${files_to_send}', '${postId}')`
                         connection.query(ADD_FILES_BLOG_POSTS, (err, result) => {
@@ -145,8 +145,8 @@ export const addComment = (username, description, date, postid, files) => {
             }
             else {
                 if (result) {
-                    const commentId = result[0].LAST_INSERT_ID
-                    const files_to_send = files.join(',');
+                    const commentId = result[1][0]['LAST_INSERT_ID()']
+                    const files_to_send = files
                     const ADD_FILES_BLOG_COMMENTS = `INSERT INTO blog_comments_files (path, post_id, comment_id) VALUES ('${files_to_send}', '${postid}', '${commentId}')`
                     connection.query(ADD_FILES_BLOG_COMMENTS, (err, result) => {
                         if (err) {
@@ -155,11 +155,11 @@ export const addComment = (username, description, date, postid, files) => {
                         }
                         else {
                             if (result) {
-                                loggerInfo.info(`${files_to_send} success add to add comment blog post`)
+                                loggerInfo.info(`success add to add comment blog post`)
                                 resolve(true)
                             }
                             else {
-                                loggerInfo.info(`${files_to_send} failed add to add comment blog post`)
+                                loggerInfo.info(`failed add to add comment blog post`)
                                 resolve(false)
                             }
                         }
@@ -262,8 +262,8 @@ export const addDirectPost = (username, title, description, date, files) => {
             }
             else {
                 if (result) {
-                    const postId = result[0].LAST_INSERT_ID
-                    const files_to_send = files.join(',')
+                    const postId = result[1][0]['LAST_INSERT_ID()']
+                    const files_to_send = files
                     const ADD_FILES_BLOG_POSTS = `INSERT INTO direct_files (path, post_file_id) VALUES ('${files_to_send}', '${postId}')`
                     connection.query(ADD_FILES_BLOG_POSTS, (err, result) => {
                         if (err) {
@@ -303,8 +303,8 @@ export const addDirectComment = (username, description, date, postid, files) => 
             }
             else {
                 if (result) {
-                    const commentId = result[0].LAST_INSERT_ID
-                    const files_to_send = files.join(',');
+                    const commentId = result[1][0]['LAST_INSERT_ID()']
+                    const files_to_send = files;
                     const ADD_FILES_BLOG_COMMENTS = `INSERT INTO direct_comments_files (path, post_id, comment_id) VALUES ('${files_to_send}', '${postid}', '${commentId}')`
                     connection.query(ADD_FILES_BLOG_COMMENTS, (err, result) => {
                         if (err) {
@@ -313,11 +313,11 @@ export const addDirectComment = (username, description, date, postid, files) => 
                         }
                         else {
                             if (result) {
-                                loggerInfo.info(`${files_to_send} success add to add comment direct post`)
+                                loggerInfo.info(`success add to add comment direct post`)
                                 resolve(true)
                             }
                             else {
-                                loggerInfo.info(`${files_to_send} failed add to add comment direct post`)
+                                loggerInfo.info(`failed add to add comment direct post`)
                                 resolve(false)
                             }
                         }
@@ -362,8 +362,10 @@ export const getAllDirectPosts = (username) => {
                     loggerInfo.info('success to load all direct posts')
                     resolve(posts)
                 }
-                loggerInfo.info('failed to load all direct posts')
-                resolve([])
+                else {
+                    loggerInfo.info('failed to load all direct posts')
+                    resolve([])
+                }
             }
         })
     })
@@ -394,11 +396,49 @@ export const getAllDirectComments = () => {
                         }
                         comments.push(obj)
                     })
-                    loggerInfo.info('succes to load all comments')
+                    loggerInfo.info('success to load all comments')
                     resolve(comments)
                 }
-                loggerInfo.info('failed to load all comments')
-                resolve(false)
+                else {
+                    loggerInfo.info('failed to load all comments')
+                    resolve(false)
+                }
+            }
+        })
+    })
+}
+
+export const getAdminDirectPosts = () => {
+    return new Promise((resolve, reject) => {
+        const GET_POSTS = `SELECT direct_posts.name, direct_posts.title, direct_posts.description, direct_posts.date, direct_posts.postid, direct_files.path 
+        FROM direct_posts LEFT JOIN direct_files 
+        ON direct_posts.postid = direct_files.post_file_id`
+        connection.query(GET_POSTS, (err, result) => {
+            if (err) {
+                loggerError.error(`failed to get all direct posts in db. ${err}`)
+                reject(err)
+            }
+            else {
+                if (result[0]) {
+                    const posts = []
+                    result.map(post => {
+                        const obj = {
+                            'postid': post.postid,
+                            'name': post.name,
+                            'title': post.title,
+                            'content': post.description,
+                            'date': post.date,
+                            'files': post.path
+                        }
+                        posts.push(obj)
+                    })
+                    loggerInfo.info('success to load all direct posts')
+                    resolve(posts)
+                }
+                else {
+                    loggerInfo.info('failed to load all direct posts')
+                    resolve([])
+                }
             }
         })
     })
