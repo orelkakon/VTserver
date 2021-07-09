@@ -5,7 +5,7 @@ import * as config from './../config.json'
 import { checkLogin } from './routes/login'
 import { checkRegister } from './routes/register'
 import { loggerError, loggerInfo } from './utils/logger'
-import { addPinCode, getPinCode } from './routes/pincode'
+import { addPinCode, getPinCode, existPinCode } from './routes/pincode'
 import { getAllBlogPosts, addBlogPost, addBlogComment } from './routes/blogPosts'
 import { getAlldirectPosts, addirectPost, addirectComment, getAdmindirectPosts } from './routes/directPosts'
 import { generateNewPINcode } from './utils/encDecPass'
@@ -73,6 +73,17 @@ app.post('/getpincode', async (req, res) => {
         res.send(pincode)
     } catch (err) {
         loggerError.error(`failed to get pin code. ${err}`)
+    }
+})
+
+app.post('/checkexistpincode', async (req, res) => {
+    try {
+        const pincode = req.body.pincode
+        const username = req.body.username
+        const exist = await existPinCode(pincode, username)        
+        res.send(exist)
+    } catch (err) {
+        loggerError.error(`failed to check pin code. ${err}`)
     }
 })
 

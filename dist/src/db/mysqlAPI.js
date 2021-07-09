@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAdminDirectPosts = exports.getAllDirectComments = exports.getAllDirectPosts = exports.addDirectComment = exports.addDirectPost = exports.getAllComments = exports.getAllPosts = exports.addComment = exports.addPost = exports.getPin = exports.addPin = exports.register = exports.login = void 0;
+exports.getAdminDirectPosts = exports.getAllDirectComments = exports.getAllDirectPosts = exports.addDirectComment = exports.addDirectPost = exports.getAllComments = exports.getAllPosts = exports.addComment = exports.addPost = exports.checkPin = exports.getPin = exports.addPin = exports.register = exports.login = void 0;
 const index_1 = require("./../index");
 const logger_1 = require("./../utils/logger");
 const encDecPass_1 = require("./../utils/encDecPass");
@@ -91,6 +91,38 @@ const getPin = (username) => {
     });
 };
 exports.getPin = getPin;
+const checkPin = (pincode, username) => {
+    return new Promise((resolve, reject) => {
+        const CHECK_PIN = `SELECT username FROM members WHERE (pincode = '${pincode}')`;
+        index_1.connection.query(CHECK_PIN, (err, result) => {
+            if (err) {
+                logger_1.loggerError.error(`failed to check pin code in db. ${err}`);
+                reject(err);
+            }
+            else {
+                if (result) {
+                    logger_1.loggerInfo.info(`success to check pin code of ${pincode}`);
+                    const ADD_NEW_PIN = `UPDATE members SET pincode = '${pincode}' WHERE (username = '${username}')`;
+                    index_1.connection.query(ADD_NEW_PIN, (err, result) => {
+                        if (err) {
+                            logger_1.loggerError.error(`failed to add new pin code in db. ${err}`);
+                            resolve(false);
+                        }
+                        else {
+                            resolve(true);
+                        }
+                    });
+                    resolve(true);
+                }
+                else {
+                    logger_1.loggerInfo.info(`failed to check pin code of ${pincode}`);
+                    resolve(false);
+                }
+            }
+        });
+    });
+};
+exports.checkPin = checkPin;
 // BLOG
 // BLOG
 // BLOG

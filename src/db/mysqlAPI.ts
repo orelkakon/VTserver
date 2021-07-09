@@ -88,6 +88,37 @@ export const getPin = (username) => {
     })
 }
 
+export const checkPin = (pincode, username) => {
+    return new Promise((resolve, reject) => {
+        const CHECK_PIN = `SELECT username FROM members WHERE (pincode = '${pincode}')`
+        connection.query(CHECK_PIN, (err, result) => {
+            if (err) {
+                loggerError.error(`failed to check pin code in db. ${err}`)
+                reject(err)
+            }
+            else {
+                if (result) {
+                    loggerInfo.info(`success to check pin code of ${pincode}`)
+                    const ADD_NEW_PIN = `UPDATE members SET pincode = '${pincode}' WHERE (username = '${username}')`
+                    connection.query(ADD_NEW_PIN, (err, result) => {
+                        if (err) {
+                            loggerError.error(`failed to add new pin code in db. ${err}`)
+                            resolve(false)
+                        }
+                        else {
+                            resolve(true)
+                        }
+                    })
+                    resolve(true)
+                }
+                else {
+                    loggerInfo.info(`failed to check pin code of ${pincode}`)
+                    resolve(false)
+                }
+            }
+        })
+    })
+}
 // BLOG
 // BLOG
 // BLOG

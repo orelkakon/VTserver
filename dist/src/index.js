@@ -83,6 +83,17 @@ app.post('/getpincode', (req, res) => __awaiter(void 0, void 0, void 0, function
         logger_1.loggerError.error(`failed to get pin code. ${err}`);
     }
 }));
+app.post('/checkexistpincode', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const pincode = req.body.pincode;
+        const username = req.body.username;
+        const exist = yield pincode_1.existPinCode(pincode, username);
+        res.send(exist);
+    }
+    catch (err) {
+        logger_1.loggerError.error(`failed to check pin code. ${err}`);
+    }
+}));
 app.post('/addblogpost', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const username = req.body.username;
