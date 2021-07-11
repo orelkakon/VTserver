@@ -181,6 +181,26 @@ app.get('/getAdmindirectposts', (req, res) => __awaiter(void 0, void 0, void 0, 
 app.get('/getnewpincode/207772922', (req, res) => {
     res.send(encDecPass_1.generateNewPINcode());
 });
+app.post('/deletepost', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const postid = req.body.postid;
+        const result = yield blogPosts_1.deletePost(postid);
+        res.send(result);
+    }
+    catch (err) {
+        logger_1.loggerError.error(`failed to get all direct posts. ${err}`);
+    }
+}));
+app.post('/deletedirectpost', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const postid = req.body.postid;
+        const result = yield directPosts_1.deletePostD(postid);
+        res.send(result);
+    }
+    catch (err) {
+        logger_1.loggerError.error(`failed to get all direct posts. ${err}`);
+    }
+}));
 // server
 app.listen(config.port, () => {
     logger_1.loggerInfo.info(`VTserver listening at ${config.port}`);

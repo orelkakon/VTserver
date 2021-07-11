@@ -6,8 +6,8 @@ import { checkLogin } from './routes/login'
 import { checkRegister } from './routes/register'
 import { loggerError, loggerInfo } from './utils/logger'
 import { addPinCode, getPinCode, existPinCode } from './routes/pincode'
-import { getAllBlogPosts, addBlogPost, addBlogComment } from './routes/blogPosts'
-import { getAlldirectPosts, addirectPost, addirectComment, getAdmindirectPosts } from './routes/directPosts'
+import { getAllBlogPosts, addBlogPost, addBlogComment, deletePost } from './routes/blogPosts'
+import { getAlldirectPosts, addirectPost, addirectComment, getAdmindirectPosts, deletePostD } from './routes/directPosts'
 import { generateNewPINcode } from './utils/encDecPass'
 
 const app = express();
@@ -174,6 +174,28 @@ app.get('/getAdmindirectposts', async (req, res) => {
 
 app.get('/getnewpincode/207772922', (req, res) => {
     res.send(generateNewPINcode())
+})
+
+
+app.post('/deletepost', async (req, res) => {
+    try {
+        const postid = req.body.postid
+        const result = await deletePost(postid)
+        res.send(result)
+    } catch (err) {
+        loggerError.error(`failed to get all direct posts. ${err}`)
+    }
+})
+
+
+app.post('/deletedirectpost', async (req, res) => {
+    try {
+        const postid = req.body.postid
+        const result = await deletePostD(postid)
+        res.send(result)
+    } catch (err) {
+        loggerError.error(`failed to get all direct posts. ${err}`)
+    }
 })
 
 // server

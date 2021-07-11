@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAdminDirectPosts = exports.getAllDirectComments = exports.getAllDirectPosts = exports.addDirectComment = exports.addDirectPost = exports.getAllComments = exports.getAllPosts = exports.addComment = exports.addPost = exports.checkPin = exports.getPin = exports.addPin = exports.register = exports.login = void 0;
+exports.delPost = exports.getAdminDirectPosts = exports.getAllDirectComments = exports.getAllDirectPosts = exports.addDirectComment = exports.addDirectPost = exports.getAllComments = exports.getAllPosts = exports.addComment = exports.addPost = exports.checkPin = exports.getPin = exports.addPin = exports.register = exports.login = void 0;
 const index_1 = require("./../index");
 const logger_1 = require("./../utils/logger");
 const encDecPass_1 = require("./../utils/encDecPass");
@@ -307,11 +307,11 @@ const addDirectPost = (username, title, description, date, files) => {
                         }
                         else {
                             if (result) {
-                                logger_1.loggerInfo.info(`${files_to_send} success add to direct post`);
+                                logger_1.loggerInfo.info(`success add to direct post`);
                                 resolve(true);
                             }
                             else {
-                                logger_1.loggerInfo.info(`${files_to_send} failed add to direct post`);
+                                logger_1.loggerInfo.info(`failed add to direct post`);
                                 resolve(false);
                             }
                         }
@@ -479,4 +479,64 @@ const getAdminDirectPosts = () => {
     });
 };
 exports.getAdminDirectPosts = getAdminDirectPosts;
+const delPost = (postid, kind) => {
+    return new Promise((resolve, reject) => {
+        let DELETE_COMMENT_FILES, DELETE_COMMENTS, DELETE_POST_FILES, DELETE_POST;
+        if (kind == 'blog') {
+            DELETE_COMMENT_FILES = `DELETE FROM blog_comments_files WHERE post_id = '${postid}';`;
+            DELETE_COMMENTS = `DELETE FROM blog_comments WHERE postid = '${postid}';`;
+            DELETE_POST_FILES = `DELETE FROM blog_files WHERE post_file_id = '${postid}';`;
+            DELETE_POST = `DELETE FROM blog_posts WHERE postid = '${postid}';`;
+        }
+        else {
+            DELETE_COMMENT_FILES = `DELETE FROM direct_comments_files WHERE post_id = '${postid}';`;
+            DELETE_COMMENTS = `DELETE FROM direct_comments WHERE postid = '${postid}';`;
+            DELETE_POST_FILES = `DELETE FROM direct_files WHERE post_file_id = '${postid}';`;
+            DELETE_POST = `DELETE FROM direct_posts WHERE postid = '${postid}';`;
+        }
+        index_1.connection.query(DELETE_COMMENT_FILES, (err, result) => {
+            if (err) {
+                logger_1.loggerError.error(`failed to delete post in db. ${err}`);
+                reject(err);
+            }
+            else {
+                if (result) {
+                    index_1.connection.query(DELETE_COMMENTS, (err, result) => {
+                        if (err) {
+                            logger_1.loggerError.error(`failed to delete post in db. ${err}`);
+                            reject(err);
+                        }
+                        else {
+                            if (result) {
+                                index_1.connection.query(DELETE_POST_FILES, (err, result) => {
+                                    if (err) {
+                                        logger_1.loggerError.error(`failed to delete post in db. ${err}`);
+                                        reject(err);
+                                    }
+                                    else {
+                                        if (result) {
+                                            index_1.connection.query(DELETE_POST, (err, result) => {
+                                                if (err) {
+                                                    logger_1.loggerError.error(`failed to delete post in db. ${err}`);
+                                                    reject(err);
+                                                }
+                                                else {
+                                                    if (result) {
+                                                        logger_1.loggerInfo.info('success to load all direct posts');
+                                                        resolve(true);
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    });
+};
+exports.delPost = delPost;
 //# sourceMappingURL=mysqlAPI.js.map

@@ -303,11 +303,11 @@ export const addDirectPost = (username, title, description, date, files) => {
                         }
                         else {
                             if (result) {
-                                loggerInfo.info(`${files_to_send} success add to direct post`)
+                                loggerInfo.info(`success add to direct post`)
                                 resolve(true)
                             }
                             else {
-                                loggerInfo.info(`${files_to_send} failed add to direct post`)
+                                loggerInfo.info(`failed add to direct post`)
                                 resolve(false)
                             }
                         }
@@ -469,6 +469,66 @@ export const getAdminDirectPosts = () => {
                 else {
                     loggerInfo.info('failed to load all direct posts')
                     resolve([])
+                }
+            }
+        })
+    })
+}
+
+
+export const delPost = (postid, kind) => {
+    return new Promise((resolve, reject) => {
+        let DELETE_COMMENT_FILES, DELETE_COMMENTS, DELETE_POST_FILES, DELETE_POST;
+        if(kind == 'blog'){
+            DELETE_COMMENT_FILES = `DELETE FROM blog_comments_files WHERE post_id = '${postid}';`
+            DELETE_COMMENTS = `DELETE FROM blog_comments WHERE postid = '${postid}';`
+            DELETE_POST_FILES = `DELETE FROM blog_files WHERE post_file_id = '${postid}';`
+            DELETE_POST = `DELETE FROM blog_posts WHERE postid = '${postid}';`
+        } else {
+            DELETE_COMMENT_FILES = `DELETE FROM direct_comments_files WHERE post_id = '${postid}';`
+            DELETE_COMMENTS = `DELETE FROM direct_comments WHERE postid = '${postid}';`
+            DELETE_POST_FILES = `DELETE FROM direct_files WHERE post_file_id = '${postid}';`
+            DELETE_POST = `DELETE FROM direct_posts WHERE postid = '${postid}';`
+        }
+        connection.query(DELETE_COMMENT_FILES, (err, result) => {
+            if (err) {
+                loggerError.error(`failed to delete post in db. ${err}`)
+                reject(err)
+            }
+            else {
+                if (result) {
+                    connection.query(DELETE_COMMENTS, (err, result) => {
+                        if (err) {
+                            loggerError.error(`failed to delete post in db. ${err}`)
+                            reject(err)
+                        }
+                        else {
+                            if (result) {
+                                connection.query(DELETE_POST_FILES, (err, result) => {
+                                    if (err) {
+                                        loggerError.error(`failed to delete post in db. ${err}`)
+                                        reject(err)
+                                    }
+                                    else {
+                                        if (result) {
+                                            connection.query(DELETE_POST, (err, result) => {
+                                                if (err) {
+                                                    loggerError.error(`failed to delete post in db. ${err}`)
+                                                    reject(err)
+                                                }
+                                                else {
+                                                    if (result) {
+                                                        loggerInfo.info('success to load all direct posts')
+                                                        resolve(true)
+                                                    }
+                                                }
+                                            })
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    })
                 }
             }
         })
