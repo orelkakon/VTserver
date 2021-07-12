@@ -1,4 +1,4 @@
-import { addDirectPost, addDirectComment, getAllDirectComments, getAllDirectPosts, getAdminDirectPosts, delPost } from './../db/mysqlAPI'
+import { addDirectPost, addDirectComment, getAllDirectComments, getAllDirectPosts, getAdminDirectPosts, delPost, delComment } from './../db/mysqlAPI'
 import { mergePostsComment } from './../utils/util'
 
 
@@ -13,6 +13,10 @@ export const addirectComment = async (username, description, date, postid, files
 
 export const deletePostD = async (postid) => {
     return await delPost(postid, 'direct');
+}
+
+export const deleteCommentD = async (commentid) => {
+    return await delComment(commentid, 'direct');
 }
 
 export const getAlldirectPosts = async (username) => {

@@ -1,4 +1,4 @@
-import { addPost, addComment, getAllPosts, getAllComments, delPost } from './../db/mysqlAPI'
+import { addPost, addComment, getAllPosts, getAllComments, delPost, delComment } from './../db/mysqlAPI'
 import { mergePostsComment } from './../utils/util'
 
 export const addBlogPost = async (username, title, description, date, files) => {
@@ -13,6 +13,11 @@ export const addBlogComment = async (username, description, date, postid, files)
 export const deletePost = async (postid) => {
     return await delPost(postid, 'blog');
 }
+
+export const deleteCommentD = async (commentid) => {
+    return await delComment(commentid, 'blog');
+}
+
 
 export const getAllBlogPosts = async () => {
     const posts = await getAllPosts()

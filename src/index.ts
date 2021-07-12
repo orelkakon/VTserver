@@ -7,7 +7,7 @@ import { checkRegister } from './routes/register'
 import { loggerError, loggerInfo } from './utils/logger'
 import { addPinCode, getPinCode, existPinCode } from './routes/pincode'
 import { getAllBlogPosts, addBlogPost, addBlogComment, deletePost } from './routes/blogPosts'
-import { getAlldirectPosts, addirectPost, addirectComment, getAdmindirectPosts, deletePostD } from './routes/directPosts'
+import { getAlldirectPosts, addirectPost, addirectComment, getAdmindirectPosts, deletePostD, deleteCommentD } from './routes/directPosts'
 import { generateNewPINcode } from './utils/encDecPass'
 
 const app = express();
@@ -183,10 +183,9 @@ app.post('/deletepost', async (req, res) => {
         const result = await deletePost(postid)
         res.send(result)
     } catch (err) {
-        loggerError.error(`failed to get all direct posts. ${err}`)
+        loggerError.error(`failed to delete post. ${err}`)
     }
 })
-
 
 app.post('/deletedirectpost', async (req, res) => {
     try {
@@ -194,7 +193,27 @@ app.post('/deletedirectpost', async (req, res) => {
         const result = await deletePostD(postid)
         res.send(result)
     } catch (err) {
-        loggerError.error(`failed to get all direct posts. ${err}`)
+        loggerError.error(`failed to delete direct post. ${err}`)
+    }
+})
+
+app.post('/deletecomment', async (req, res) => {
+    try {
+        const commentid = req.body.commentid
+        const result = await deleteCommentD(commentid)
+        res.send(result)
+    } catch (err) {
+        loggerError.error(`failed to delete comment. ${err}`)
+    }
+})
+
+app.post('/deletedirectcomment', async (req, res) => {
+    try {
+        const commentid = req.body.commentid
+        const result = await deleteCommentD(commentid)
+        res.send(result)
+    } catch (err) {
+        loggerError.error(`failed to delete direct comment. ${err}`)
     }
 })
 

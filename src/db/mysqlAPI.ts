@@ -534,3 +534,38 @@ export const delPost = (postid, kind) => {
         })
     })
 }
+
+export const delComment = (commentid, kind) => {
+    return new Promise((resolve, reject) => {
+        let DELETE_COMMENT_FILES, DELETE_COMMENTS;
+        if(kind == 'blog'){
+            DELETE_COMMENT_FILES = `DELETE FROM blog_comments_files WHERE comment_id = '${commentid}';`
+            DELETE_COMMENTS = `DELETE FROM blog_comments WHERE commentid = '${commentid}';`
+        } else {
+            DELETE_COMMENT_FILES = `DELETE FROM direct_comments_files WHERE comment_id = '${commentid}';`
+            DELETE_COMMENTS = `DELETE FROM direct_comments WHERE commentid = '${commentid}';`
+        }
+        connection.query(DELETE_COMMENT_FILES, (err, result) => {
+            if (err) {
+                loggerError.error(`failed to delete comment in db. ${err}`)
+                reject(err)
+            }
+            else {
+                if (result) {
+                    connection.query(DELETE_COMMENTS, (err, result) => {
+                        if (err) {
+                            loggerError.error(`failed to delete comment in db. ${err}`)
+                            reject(err)
+                        }
+                        else {
+                            if (result) {
+                                loggerInfo.info('success to delete comment')
+                                resolve(true)
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    })
+}
