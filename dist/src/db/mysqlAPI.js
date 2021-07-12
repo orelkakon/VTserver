@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.delPost = exports.getAdminDirectPosts = exports.getAllDirectComments = exports.getAllDirectPosts = exports.addDirectComment = exports.addDirectPost = exports.getAllComments = exports.getAllPosts = exports.addComment = exports.addPost = exports.checkPin = exports.getPin = exports.addPin = exports.register = exports.login = void 0;
+exports.delComment = exports.delPost = exports.getAdminDirectPosts = exports.getAllDirectComments = exports.getAllDirectPosts = exports.addDirectComment = exports.addDirectPost = exports.getAllComments = exports.getAllPosts = exports.addComment = exports.addPost = exports.checkPin = exports.getPin = exports.addPin = exports.register = exports.login = void 0;
 const index_1 = require("./../index");
 const logger_1 = require("./../utils/logger");
 const encDecPass_1 = require("./../utils/encDecPass");
@@ -539,4 +539,41 @@ const delPost = (postid, kind) => {
     });
 };
 exports.delPost = delPost;
+const delComment = (commentid, kind) => {
+    return new Promise((resolve, reject) => {
+        let DELETE_COMMENT_FILES, DELETE_COMMENTS;
+        if (kind == 'blog') {
+            DELETE_COMMENT_FILES = `DELETE FROM blog_comments_files WHERE comment_id = '${commentid}';`;
+            DELETE_COMMENTS = `DELETE FROM blog_comments WHERE commentid = '${commentid}';`;
+        }
+        else {
+            DELETE_COMMENT_FILES = `DELETE FROM direct_comments_files WHERE comment_id = '${commentid}';`;
+            DELETE_COMMENTS = `DELETE FROM direct_comments WHERE commentid = '${commentid}';`;
+        }
+        console.log(DELETE_COMMENT_FILES, DELETE_COMMENTS);
+        index_1.connection.query(DELETE_COMMENT_FILES, (err, result) => {
+            if (err) {
+                logger_1.loggerError.error(`failed to delete comment in db. ${err}`);
+                reject(err);
+            }
+            else {
+                if (result) {
+                    index_1.connection.query(DELETE_COMMENTS, (err, result) => {
+                        if (err) {
+                            logger_1.loggerError.error(`failed to delete comment in db. ${err}`);
+                            reject(err);
+                        }
+                        else {
+                            if (result) {
+                                logger_1.loggerInfo.info('success to delete comment');
+                                resolve(true);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    });
+};
+exports.delComment = delComment;
 //# sourceMappingURL=mysqlAPI.js.map

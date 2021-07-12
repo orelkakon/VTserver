@@ -14,10 +14,9 @@ export const deletePost = async (postid) => {
     return await delPost(postid, 'blog');
 }
 
-export const deleteCommentD = async (commentid) => {
+export const deleteComment = async (commentid) => {
     return await delComment(commentid, 'blog');
 }
-
 
 export const getAllBlogPosts = async () => {
     const posts = await getAllPosts()

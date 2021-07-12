@@ -188,7 +188,7 @@ app.post('/deletepost', (req, res) => __awaiter(void 0, void 0, void 0, function
         res.send(result);
     }
     catch (err) {
-        logger_1.loggerError.error(`failed to get all direct posts. ${err}`);
+        logger_1.loggerError.error(`failed to delete post. ${err}`);
     }
 }));
 app.post('/deletedirectpost', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -198,7 +198,27 @@ app.post('/deletedirectpost', (req, res) => __awaiter(void 0, void 0, void 0, fu
         res.send(result);
     }
     catch (err) {
-        logger_1.loggerError.error(`failed to get all direct posts. ${err}`);
+        logger_1.loggerError.error(`failed to delete direct post. ${err}`);
+    }
+}));
+app.post('/deletecomment', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const commentid = req.body.commentid;
+        const result = yield blogPosts_1.deleteComment(commentid);
+        res.send(result);
+    }
+    catch (err) {
+        logger_1.loggerError.error(`failed to delete comment. ${err}`);
+    }
+}));
+app.post('/deletedirectcomment', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const commentid = req.body.commentid;
+        const result = yield directPosts_1.deleteCommentD(commentid);
+        res.send(result);
+    }
+    catch (err) {
+        logger_1.loggerError.error(`failed to delete direct comment. ${err}`);
     }
 }));
 // server

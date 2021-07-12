@@ -6,7 +6,7 @@ import { checkLogin } from './routes/login'
 import { checkRegister } from './routes/register'
 import { loggerError, loggerInfo } from './utils/logger'
 import { addPinCode, getPinCode, existPinCode } from './routes/pincode'
-import { getAllBlogPosts, addBlogPost, addBlogComment, deletePost } from './routes/blogPosts'
+import { getAllBlogPosts, addBlogPost, addBlogComment, deletePost, deleteComment } from './routes/blogPosts'
 import { getAlldirectPosts, addirectPost, addirectComment, getAdmindirectPosts, deletePostD, deleteCommentD } from './routes/directPosts'
 import { generateNewPINcode } from './utils/encDecPass'
 
@@ -200,7 +200,7 @@ app.post('/deletedirectpost', async (req, res) => {
 app.post('/deletecomment', async (req, res) => {
     try {
         const commentid = req.body.commentid
-        const result = await deleteCommentD(commentid)
+        const result = await deleteComment(commentid)
         res.send(result)
     } catch (err) {
         loggerError.error(`failed to delete comment. ${err}`)
