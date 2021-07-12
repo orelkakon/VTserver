@@ -1,9 +1,29 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.delComment = exports.delPost = exports.getAdminDirectPosts = exports.getAllDirectComments = exports.getAllDirectPosts = exports.addDirectComment = exports.addDirectPost = exports.getAllComments = exports.getAllPosts = exports.addComment = exports.addPost = exports.checkPin = exports.getPin = exports.addPin = exports.register = exports.login = void 0;
+exports.delComment = exports.delPost = exports.getAdminDirectPosts = exports.getAllDirectComments = exports.getAllDirectPosts = exports.addDirectComment = exports.addDirectPost = exports.getAllComments = exports.getAllPosts = exports.addComment = exports.addPost = exports.checkPin = exports.getPin = exports.addPin = exports.register = exports.login = exports.getData = void 0;
 const index_1 = require("./../index");
 const logger_1 = require("./../utils/logger");
 const encDecPass_1 = require("./../utils/encDecPass");
+const getData = (username) => {
+    return new Promise((resolve, reject) => {
+        const GET_MEMBER_DATA = `SELECT * FROM members WHERE (username = '${username}')`;
+        index_1.connection.query(GET_MEMBER_DATA, (err, result) => {
+            if (err) {
+                logger_1.loggerError.error(`failed to check login in db. ${err}`);
+                reject(err);
+            }
+            else {
+                if (result) {
+                    resolve(result[0]);
+                }
+                else {
+                    resolve('failed');
+                }
+            }
+        });
+    });
+};
+exports.getData = getData;
 const login = (username) => {
     return new Promise((resolve, reject) => {
         const GET_MEMBER = `SELECT password FROM members WHERE (username = '${username}')`;
@@ -550,7 +570,6 @@ const delComment = (commentid, kind) => {
             DELETE_COMMENT_FILES = `DELETE FROM direct_comments_files WHERE comment_id = '${commentid}';`;
             DELETE_COMMENTS = `DELETE FROM direct_comments WHERE commentid = '${commentid}';`;
         }
-        console.log(DELETE_COMMENT_FILES, DELETE_COMMENTS);
         index_1.connection.query(DELETE_COMMENT_FILES, (err, result) => {
             if (err) {
                 logger_1.loggerError.error(`failed to delete comment in db. ${err}`);

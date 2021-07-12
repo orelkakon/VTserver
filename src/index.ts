@@ -2,6 +2,7 @@ import * as express from 'express'
 import * as cors from 'cors'
 import * as config from './../config.json'
 
+import { getMemberData } from './routes/utils'
 import { checkLogin } from './routes/login'
 import { checkRegister } from './routes/register'
 import { loggerError, loggerInfo } from './utils/logger'
@@ -69,7 +70,7 @@ app.post('/addpincode', async (req, res) => {
 app.post('/getpincode', async (req, res) => {
     try {
         const username = req.body.username
-        const pincode = await getPinCode(username)        
+        const pincode = await getPinCode(username)
         res.send(pincode)
     } catch (err) {
         loggerError.error(`failed to get pin code. ${err}`)
@@ -80,7 +81,7 @@ app.post('/checkexistpincode', async (req, res) => {
     try {
         const pincode = req.body.pincode
         const username = req.body.username
-        const exist = await existPinCode(pincode, username)        
+        const exist = await existPinCode(pincode, username)
         res.send(exist)
     } catch (err) {
         loggerError.error(`failed to check pin code. ${err}`)
@@ -214,6 +215,16 @@ app.post('/deletedirectcomment', async (req, res) => {
         res.send(result)
     } catch (err) {
         loggerError.error(`failed to delete direct comment. ${err}`)
+    }
+})
+
+app.post('/getmemberdata', async (req, res) => {
+    try {
+        const username = req.body.username
+        const result = await getMemberData(username)
+        res.send(result)
+    } catch (err) {
+        loggerError.error(`failed to get member data ${err}`)
     }
 })
 

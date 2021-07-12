@@ -13,6 +13,7 @@ exports.connection = void 0;
 const express = require("express");
 const cors = require("cors");
 const config = require("./../config.json");
+const utils_1 = require("./routes/utils");
 const login_1 = require("./routes/login");
 const register_1 = require("./routes/register");
 const logger_1 = require("./utils/logger");
@@ -219,6 +220,16 @@ app.post('/deletedirectcomment', (req, res) => __awaiter(void 0, void 0, void 0,
     }
     catch (err) {
         logger_1.loggerError.error(`failed to delete direct comment. ${err}`);
+    }
+}));
+app.post('/getmemberdata', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const username = req.body.username;
+        const result = yield utils_1.getMemberData(username);
+        res.send(result);
+    }
+    catch (err) {
+        logger_1.loggerError.error(`failed to get member data ${err}`);
     }
 }));
 // server

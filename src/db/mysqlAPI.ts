@@ -2,6 +2,25 @@ import { connection } from './../index'
 import { loggerError, loggerInfo } from './../utils/logger'
 import { decrypt } from './../utils/encDecPass'
 
+export const getData = (username) => {
+    return new Promise((resolve, reject) => {
+        const GET_MEMBER_DATA = `SELECT * FROM members WHERE (username = '${username}')`
+        connection.query(GET_MEMBER_DATA, (err, result) => {
+            if (err) {
+                loggerError.error(`failed to check login in db. ${err}`)
+                reject(err)
+            }
+            else {
+                if (result) {
+                    resolve(result[0])
+                } else {
+                    resolve('failed')
+                }
+            }
+        })
+    })
+}
+
 export const login = (username) => {
     return new Promise((resolve, reject) => {
         const GET_MEMBER = `SELECT password FROM members WHERE (username = '${username}')`
