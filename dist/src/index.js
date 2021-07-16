@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.connection = void 0;
+exports.pool = void 0;
 const express = require("express");
 const cors = require("cors");
 const config = require("./../config.json");
@@ -21,13 +21,15 @@ const pincode_1 = require("./routes/pincode");
 const blogPosts_1 = require("./routes/blogPosts");
 const directPosts_1 = require("./routes/directPosts");
 const encDecPass_1 = require("./utils/encDecPass");
+var bodyParser = require('body-parser');
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json({ limit: '30mb', extended: true }));
+app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }));
 // db
 const mysql = require('mysql');
 const { host, user, password, database } = config;
-exports.connection = mysql.createConnection({
+exports.pool = mysql.createPool({
     host,
     user,
     port: config.dbPort,
@@ -49,7 +51,7 @@ app.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         }
     }
     catch (err) {
-        logger_1.loggerError.error(`failed in params of /login route. ${err}`);
+        logger_1.loggerError.error(`${Date.now()}: failed in params of /login route. ${err}`);
     }
 }));
 app.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -61,7 +63,7 @@ app.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         (yield register_1.checkRegister(username, password, phone, email)) ? res.send(true) : res.send(false);
     }
     catch (err) {
-        logger_1.loggerError.error(`failed in params of /register route. ${err}`);
+        logger_1.loggerError.error(`${Date.now()}: failed in params of /register route. ${err}`);
     }
 }));
 app.post('/addpincode', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -71,7 +73,7 @@ app.post('/addpincode', (req, res) => __awaiter(void 0, void 0, void 0, function
         (yield pincode_1.addPinCode(username, pincode)) ? res.send(true) : res.send(false);
     }
     catch (err) {
-        logger_1.loggerError.error(`failed to add pin code. ${err}`);
+        logger_1.loggerError.error(`${Date.now()}: failed to add pin code. ${err}`);
     }
 }));
 app.post('/getpincode', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -81,7 +83,7 @@ app.post('/getpincode', (req, res) => __awaiter(void 0, void 0, void 0, function
         res.send(pincode);
     }
     catch (err) {
-        logger_1.loggerError.error(`failed to get pin code. ${err}`);
+        logger_1.loggerError.error(`${Date.now()}: failed to get pin code. ${err}`);
     }
 }));
 app.post('/checkexistpincode', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -92,7 +94,7 @@ app.post('/checkexistpincode', (req, res) => __awaiter(void 0, void 0, void 0, f
         res.send(exist);
     }
     catch (err) {
-        logger_1.loggerError.error(`failed to check pin code. ${err}`);
+        logger_1.loggerError.error(`${Date.now()}: failed to check pin code. ${err}`);
     }
 }));
 app.post('/addblogpost', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -106,7 +108,7 @@ app.post('/addblogpost', (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.send(result);
     }
     catch (err) {
-        logger_1.loggerError.error(`failed to add blog post. ${err}`);
+        logger_1.loggerError.error(`${Date.now()}: failed to add blog post. ${err}`);
     }
 }));
 app.post('/addblogcomment', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -120,7 +122,7 @@ app.post('/addblogcomment', (req, res) => __awaiter(void 0, void 0, void 0, func
         res.send(result);
     }
     catch (err) {
-        logger_1.loggerError.error(`failed to add blog comment. ${err}`);
+        logger_1.loggerError.error(`${Date.now()}: failed to add blog comment. ${err}`);
     }
 }));
 app.get('/getallblogposts', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -129,7 +131,7 @@ app.get('/getallblogposts', (req, res) => __awaiter(void 0, void 0, void 0, func
         res.send(result);
     }
     catch (err) {
-        logger_1.loggerError.error(`failed to get all blog posts. ${err}`);
+        logger_1.loggerError.error(`${Date.now()}: failed to get all blog posts. ${err}`);
     }
 }));
 app.post('/adddirectpost', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -143,7 +145,7 @@ app.post('/adddirectpost', (req, res) => __awaiter(void 0, void 0, void 0, funct
         res.send(result);
     }
     catch (err) {
-        logger_1.loggerError.error(`failed to add direct post. ${err}`);
+        logger_1.loggerError.error(`${Date.now()}: failed to add direct post. ${err}`);
     }
 }));
 app.post('/adddirectcomment', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -157,7 +159,7 @@ app.post('/adddirectcomment', (req, res) => __awaiter(void 0, void 0, void 0, fu
         res.send(result);
     }
     catch (err) {
-        logger_1.loggerError.error(`failed to add direct comment. ${err}`);
+        logger_1.loggerError.error(`${Date.now()}: failed to add direct comment. ${err}`);
     }
 }));
 app.post('/getalldirectposts', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -167,7 +169,7 @@ app.post('/getalldirectposts', (req, res) => __awaiter(void 0, void 0, void 0, f
         res.send(result);
     }
     catch (err) {
-        logger_1.loggerError.error(`failed to get all direct posts. ${err}`);
+        logger_1.loggerError.error(`${Date.now()}: failed to get all direct posts. ${err}`);
     }
 }));
 app.get('/getAdmindirectposts', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -176,7 +178,7 @@ app.get('/getAdmindirectposts', (req, res) => __awaiter(void 0, void 0, void 0, 
         res.send(result);
     }
     catch (err) {
-        logger_1.loggerError.error(`failed to get all direct posts. ${err}`);
+        logger_1.loggerError.error(`${Date.now()}: failed to get all direct posts. ${err}`);
     }
 }));
 app.get('/getnewpincode/207772922', (req, res) => {
@@ -189,7 +191,7 @@ app.post('/deletepost', (req, res) => __awaiter(void 0, void 0, void 0, function
         res.send(result);
     }
     catch (err) {
-        logger_1.loggerError.error(`failed to delete post. ${err}`);
+        logger_1.loggerError.error(`${Date.now()}: failed to delete post. ${err}`);
     }
 }));
 app.post('/deletedirectpost', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -199,7 +201,7 @@ app.post('/deletedirectpost', (req, res) => __awaiter(void 0, void 0, void 0, fu
         res.send(result);
     }
     catch (err) {
-        logger_1.loggerError.error(`failed to delete direct post. ${err}`);
+        logger_1.loggerError.error(`${Date.now()}: failed to delete direct post. ${err}`);
     }
 }));
 app.post('/deletecomment', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -209,7 +211,7 @@ app.post('/deletecomment', (req, res) => __awaiter(void 0, void 0, void 0, funct
         res.send(result);
     }
     catch (err) {
-        logger_1.loggerError.error(`failed to delete comment. ${err}`);
+        logger_1.loggerError.error(`${Date.now()}: failed to delete comment. ${err}`);
     }
 }));
 app.post('/deletedirectcomment', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -219,7 +221,7 @@ app.post('/deletedirectcomment', (req, res) => __awaiter(void 0, void 0, void 0,
         res.send(result);
     }
     catch (err) {
-        logger_1.loggerError.error(`failed to delete direct comment. ${err}`);
+        logger_1.loggerError.error(`${Date.now()}: failed to delete direct comment. ${err}`);
     }
 }));
 app.post('/getmemberdata', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -229,7 +231,7 @@ app.post('/getmemberdata', (req, res) => __awaiter(void 0, void 0, void 0, funct
         res.send(result);
     }
     catch (err) {
-        logger_1.loggerError.error(`failed to get member data ${err}`);
+        logger_1.loggerError.error(`${Date.now()}: failed to get member data ${err}`);
     }
 }));
 // server

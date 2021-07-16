@@ -10,16 +10,18 @@ import { addPinCode, getPinCode, existPinCode } from './routes/pincode'
 import { getAllBlogPosts, addBlogPost, addBlogComment, deletePost, deleteComment } from './routes/blogPosts'
 import { getAlldirectPosts, addirectPost, addirectComment, getAdmindirectPosts, deletePostD, deleteCommentD } from './routes/directPosts'
 import { generateNewPINcode } from './utils/encDecPass'
+var bodyParser = require('body-parser');
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json({limit: '30mb', extended: true}))
+app.use(bodyParser.urlencoded({limit: '30mb', extended: true}))
 
 // db
 const mysql = require('mysql');
 
 const { host, user, password, database } = config
-export const connection = mysql.createConnection({
+export const pool = mysql.createPool({
     host,
     user,
     port: config.dbPort,
@@ -41,7 +43,7 @@ app.post('/login', async (req, res) => {
             res.send(false)
         }
     } catch (err) {
-        loggerError.error(`failed in params of /login route. ${err}`)
+        loggerError.error(`${Date.now()}: failed in params of /login route. ${err}`)
     }
 })
 
@@ -53,7 +55,7 @@ app.post('/register', async (req, res) => {
         const email = req.body.email
         await checkRegister(username, password, phone, email) ? res.send(true) : res.send(false)
     } catch (err) {
-        loggerError.error(`failed in params of /register route. ${err}`)
+        loggerError.error(`${Date.now()}: failed in params of /register route. ${err}`)
     }
 })
 
@@ -63,7 +65,7 @@ app.post('/addpincode', async (req, res) => {
         const pincode = req.body.pincode
         await addPinCode(username, pincode) ? res.send(true) : res.send(false)
     } catch (err) {
-        loggerError.error(`failed to add pin code. ${err}`)
+        loggerError.error(`${Date.now()}: failed to add pin code. ${err}`)
     }
 })
 
@@ -73,7 +75,7 @@ app.post('/getpincode', async (req, res) => {
         const pincode = await getPinCode(username)
         res.send(pincode)
     } catch (err) {
-        loggerError.error(`failed to get pin code. ${err}`)
+        loggerError.error(`${Date.now()}: failed to get pin code. ${err}`)
     }
 })
 
@@ -84,7 +86,7 @@ app.post('/checkexistpincode', async (req, res) => {
         const exist = await existPinCode(pincode, username)
         res.send(exist)
     } catch (err) {
-        loggerError.error(`failed to check pin code. ${err}`)
+        loggerError.error(`${Date.now()}: failed to check pin code. ${err}`)
     }
 })
 
@@ -98,7 +100,7 @@ app.post('/addblogpost', async (req, res) => {
         const result = await addBlogPost(username, title, description, date, files)
         res.send(result)
     } catch (err) {
-        loggerError.error(`failed to add blog post. ${err}`)
+        loggerError.error(`${Date.now()}: failed to add blog post. ${err}`)
     }
 })
 
@@ -112,7 +114,7 @@ app.post('/addblogcomment', async (req, res) => {
         const result = await addBlogComment(username, description, date, postid, files)
         res.send(result)
     } catch (err) {
-        loggerError.error(`failed to add blog comment. ${err}`)
+        loggerError.error(`${Date.now()}: failed to add blog comment. ${err}`)
     }
 })
 
@@ -121,7 +123,7 @@ app.get('/getallblogposts', async (req, res) => {
         const result = await getAllBlogPosts()
         res.send(result)
     } catch (err) {
-        loggerError.error(`failed to get all blog posts. ${err}`)
+        loggerError.error(`${Date.now()}: failed to get all blog posts. ${err}`)
     }
 })
 
@@ -135,7 +137,7 @@ app.post('/adddirectpost', async (req, res) => {
         const result = await addirectPost(username, title, description, date, files)
         res.send(result)
     } catch (err) {
-        loggerError.error(`failed to add direct post. ${err}`)
+        loggerError.error(`${Date.now()}: failed to add direct post. ${err}`)
     }
 })
 
@@ -149,7 +151,7 @@ app.post('/adddirectcomment', async (req, res) => {
         const result = await addirectComment(username, description, date, postid, files)
         res.send(result)
     } catch (err) {
-        loggerError.error(`failed to add direct comment. ${err}`)
+        loggerError.error(`${Date.now()}: failed to add direct comment. ${err}`)
     }
 })
 
@@ -159,7 +161,7 @@ app.post('/getalldirectposts', async (req, res) => {
         const result = await getAlldirectPosts(username)
         res.send(result)
     } catch (err) {
-        loggerError.error(`failed to get all direct posts. ${err}`)
+        loggerError.error(`${Date.now()}: failed to get all direct posts. ${err}`)
     }
 })
 
@@ -168,7 +170,7 @@ app.get('/getAdmindirectposts', async (req, res) => {
         const result = await getAdmindirectPosts()
         res.send(result)
     } catch (err) {
-        loggerError.error(`failed to get all direct posts. ${err}`)
+        loggerError.error(`${Date.now()}: failed to get all direct posts. ${err}`)
     }
 })
 
@@ -184,7 +186,7 @@ app.post('/deletepost', async (req, res) => {
         const result = await deletePost(postid)
         res.send(result)
     } catch (err) {
-        loggerError.error(`failed to delete post. ${err}`)
+        loggerError.error(`${Date.now()}: failed to delete post. ${err}`)
     }
 })
 
@@ -194,7 +196,7 @@ app.post('/deletedirectpost', async (req, res) => {
         const result = await deletePostD(postid)
         res.send(result)
     } catch (err) {
-        loggerError.error(`failed to delete direct post. ${err}`)
+        loggerError.error(`${Date.now()}: failed to delete direct post. ${err}`)
     }
 })
 
@@ -204,7 +206,7 @@ app.post('/deletecomment', async (req, res) => {
         const result = await deleteComment(commentid)
         res.send(result)
     } catch (err) {
-        loggerError.error(`failed to delete comment. ${err}`)
+        loggerError.error(`${Date.now()}: failed to delete comment. ${err}`)
     }
 })
 
@@ -214,7 +216,7 @@ app.post('/deletedirectcomment', async (req, res) => {
         const result = await deleteCommentD(commentid)
         res.send(result)
     } catch (err) {
-        loggerError.error(`failed to delete direct comment. ${err}`)
+        loggerError.error(`${Date.now()}: failed to delete direct comment. ${err}`)
     }
 })
 
@@ -224,7 +226,7 @@ app.post('/getmemberdata', async (req, res) => {
         const result = await getMemberData(username)
         res.send(result)
     } catch (err) {
-        loggerError.error(`failed to get member data ${err}`)
+        loggerError.error(`${Date.now()}: failed to get member data ${err}`)
     }
 })
 
