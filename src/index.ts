@@ -22,11 +22,7 @@ const mysql = require('mysql');
 
 const { host, user, password, database } = config
 export const pool = mysql.createPool({
-    host,
-    user,
-    port: config.dbPort,
-    password,
-    database,
+    connectionString: process.env.QOVERY_DATABASE_MY_DB_CONNECTION_URI,
     multipleStatements: true
 });
 
