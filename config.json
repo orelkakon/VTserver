@@ -1,8 +1,8 @@
 {
-    "host": "localhost",
+    "host": "z4dc0f3cc-mysql.qovery.io",
     "user": "root",
     "dbPort":"3306",
-    "password": "207772922",
-    "database":"vtserver",
+    "password": "2QCX0OxSM3Rg61xP",
+    "database":"vt-db",
     "port": 3001
 }
