@@ -3,6 +3,6 @@
     "user": "root",
     "dbPort":"3306",
     "password": "2QCX0OxSM3Rg61xP",
-    "database":"vt-db",
+    "database":"mysql-z4dc0f3cc",
     "port": 3001
 }
