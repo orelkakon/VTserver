@@ -231,7 +231,7 @@ app.post('/getmemberdata', async (req, res) => {
 })
 
 // server
-app.listen(config.port, () => {
+app.listen(process.env.PORT || 80, () => {
     loggerInfo.info(`VTserver listening at ${config.port}`)
     console.log(`VTserver listening at ${config.port}`)
 })
